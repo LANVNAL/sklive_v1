@@ -1,0 +1,60 @@
+{%  extends 'base.html' %}
+
+{% block title %}userinfo{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ info }}</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="row marketing">
+
+    <div class="commodity-list">
+        <table class="table">
+            <tr>
+                <th>参数</th>
+                <th>值</th>
+            </tr>
+            {% for name in info %}
+            <tr>
+                {% if name == 'xh' %}
+                    <td>{{ '学号' }}</td>
+                    <td>{{ info.xh }}</td>
+                {% endif %}
+                {% if name == 'xm' %}
+                    <td>{{ '姓名' }}</td>
+                    <td>{{ info.xm }}</td>
+                {% endif %}
+                {% if name == 'xb' %}
+                    <td>{{ '性别' }}</td>
+                    <td>{{ info.xb }}</td>
+                {% endif %}
+                {% if name == 'dh' %}
+                    <td>{{ '电话号码' }}</td>
+                    <td>{{ info.dh }}</td>
+                {% endif %}
+                {% if name == 'yxmc' %}
+                    <td>{{ '院系' }}</td>
+                    <td>{{ info.yxmc }}</td>
+                {% endif %}
+                {% if name == 'zymx' %}
+                    <td>{{ '专业' }}</td>
+                    <td>{{ info.zymc }}</td>
+                {% endif %}
+                {% if name == 'bj' %}
+                    <td>{{ '班级' }}</td>
+                    <td>{{ info.bj }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</div>
+{% endblock %}

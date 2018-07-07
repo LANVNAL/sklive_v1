@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField,SelectField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
-from funcs import login,userinfo,curriculum,grade,exam_arrangement,express
+from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
 import  json
 
 
@@ -77,8 +77,14 @@ def user():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        info = userinfo(username, password)
-        return render_template('userinfo.html',info = info)
+        check = logincheck(username,password)
+        if check == 'ok':
+            info = userinfo(username, password)
+            loginerror = 0
+            return render_template('userinfo.html', info = info, error = loginerror)
+        else:
+            loginerror = 1
+            return render_template('userinfo.html', error=loginerror)
     else:
         return render_template('user.html', form=form, name=session.get('name'))
 
@@ -89,8 +95,14 @@ def mygrade():
         semester = form.semester.data
         username = form.username.data
         password = form.password.data
-        info = grade(username, password,semester)
-        return render_template('mygrade.html',info = info)
+        check = logincheck(username, password)
+        if check == 'ok':
+            info = grade(username, password,semester)
+            loginerror = 0
+            return render_template('mygrade.html', info = info ,error = loginerror)
+        else:
+            loginerror = 1
+            return render_template('mygrade.html', error=loginerror)
     else:
         return render_template('grade.html', form=form, name=session.get('name'))
 
@@ -100,8 +112,14 @@ def myexam():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        info = exam_arrangement(username, password)
-        return render_template('myexam.html',info = info)
+        check = logincheck(username, password)
+        if check == 'ok':
+            info = exam_arrangement(username, password)
+            loginerror = 0
+            return render_template('myexam.html', info = info, error = loginerror)
+        else:
+            loginerror = 1
+            return render_template('myexam.html', error=loginerror)
     else:
         return render_template('exam.html', form=form, name=session.get('name'))
 
@@ -113,9 +131,15 @@ def mycurriculum():
         week = form.week.data
         username = form.username.data
         password = form.password.data
-        info = curriculum(username, password,semester,week)
-        #print type(info),info
-        return render_template('mycurriculum.html',info = info)
+        check = logincheck(username, password)
+        if check == 'ok':
+            info = curriculum(username, password,semester,week)
+            loginerror  = 0
+            #print type(info),info
+            return render_template('mycurriculum.html', info = info, error = loginerror)
+        else:
+            loginerror = 1
+            return render_template('mycurriculum.html', error=loginerror)
     else:
         return render_template('curriculum.html', form=form, name=session.get('name'))
 
@@ -126,10 +150,14 @@ def myexpress():
         company = form.company.data
         number = form.number.data
         info = express(company,number)
-        print type(info)
+        #print type(info)
+        if info['status'] == '200':
+            msgerror = 0
+        else:
+            msgerror = 1
         info = info['data']
-        print type(info)
-        return render_template('myexpress.html',info = info)
+        #print type(info)
+        return render_template('myexpress.html',info = info,msgerror = msgerror)
     else:
         return render_template('express.html', form=form, name=session.get('name'))
 
@@ -167,6 +195,13 @@ def api(name):
         semester = data['semester']
         week = data['week']
         info = curriculum(username, password, semester,week)
+        return str(info)
+    if name == 'express':
+        getjson = request.get_data()
+        data = json.loads(getjson)
+        company = data['company']
+        number = data['number']
+        info = exam_arrangement(company, number)
         return str(info)
 
 

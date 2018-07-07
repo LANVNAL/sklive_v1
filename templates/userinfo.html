@@ -7,8 +7,17 @@
 
 {% block content %}
 
+{% if error == 1 %}
+
+    <h1 align="center">用户名或密码错误</h1>
+
+{% endif %}
+
+{% if error == 0 %}
+
+
     <div class="page-header">
-    <h1>Hello {{ info.xm }},Welcome To SKlive!</h1>
+    <h1 align="center">Hello {{ info.xm }},Welcome To SKlive!</h1>
 </div>
 
         <table class="table table-bordered table-hover ">
@@ -49,6 +58,6 @@
             </tr>
             {% endfor %}
         </table>
-
+{% endif %}
 
 {% endblock %}

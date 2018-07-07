@@ -4,14 +4,30 @@
 
 
 {% block content %}
+{% if msgerror == 1 %}
+
+    <h1 align="center">快递公司错误或单号不存在</h1>
+
+{% endif %}
+
+{% if msgerror == 0 %}
+        <table class="table table-bordered table-hover ">
+            <tr>
+                <th>时间</th>
+
+                <th>状态</th>
+
+            {% for oneinfo in info %}
+            <tr>
+
+                    <td>{{ oneinfo.ftime }}</td>
 
 
+                    <td>{{ oneinfo.context }}</td>
 
-                {% for oneinfo in info %}
-
-                    {{ onceinfo.ftime }}
-
-                {% endfor %}
-
+            </tr>
+            {% endfor %}
+        </table>
+{% endif %}
 
 {% endblock %}

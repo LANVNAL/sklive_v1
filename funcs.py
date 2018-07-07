@@ -2,6 +2,16 @@
 import requests
 import json
 
+def logincheck(username,password):
+    login_url = 'http://jwgl.sdust.edu.cn/app.do?method=authUser&xh={}&pwd={}'.format(username, password)
+    rqs = requests.post(login_url)
+    flag = json.loads(rqs.text)
+    flagg = flag['flag']
+    #print flagg
+    if flagg == '1':
+        return 'ok'
+    else:
+        return 'error'
 
 def login(username,password):
     global S

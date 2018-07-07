@@ -5,6 +5,13 @@
 
 {% block content %}
 
+{% if error == 1 %}
+
+    <h1 align="center">用户名或密码错误</h1>
+
+{% endif %}
+
+{% if error == 0 %}
 
         <table class="table table-bordered table-hover ">
             <tr>
@@ -39,6 +46,6 @@
             </tr>
             {% endfor %}
         </table>
-
+{% endif %}
 
 {% endblock %}

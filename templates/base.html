@@ -1,6 +1,6 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}Flasky{% endblock %}
+{% block title %}SKlive{% endblock %}
 
 
 {% block head %}
@@ -12,7 +12,7 @@
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Custom styles for this template -->
-<link href="{{ url_for('static',filename='css/jumbotron-narrow.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block navbar %}
@@ -25,12 +25,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Flasky</a>
+            <a class="navbar-brand" href="/">SKlive</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/user">User</a></li>
+                <li><a href="/user">个人信息</a></li>
+                <li><a href="/grade">考试成绩</a></li>
+                <li><a href="/exam">考试安排</a></li>
+                <li><a href="/curriculum">我的课表</a></li>
+                <li><a href="/express">我的快递</a></li>
             </ul>
         </div>
     </div>
@@ -54,3 +57,4 @@
 {{ super() }}
 {{ moment.include_moment() }}
 {% endblock %}
+

@@ -1,0 +1,44 @@
+{%  extends 'base.html' %}
+
+{% block title %}考试成绩{% endblock %}
+
+
+{% block content %}
+
+
+        <table class="table table-bordered table-hover ">
+            <tr>
+                <th>课程名称</th>
+                <th>成绩</th>
+                <th>学分</th>
+                <th>学期名称</th>
+                <th>课程属性</th>
+                <th>考试性质</th>
+                <th>课程性质</th>
+                <th>备注</th>
+            </tr>
+            {% for name in info %}
+            <tr>
+
+                    <td>{{ name.kcmc }}</td>
+
+                    <td>{{ name.zcj }}</td>
+
+                    <td>{{ name.xf }}</td>
+
+                    <td>{{ name.xqmc }}</td>
+
+                    <td>{{ name.kclbmc }}</td>
+
+                    <td>{{ name.ksxzmc }}</td>
+
+                    <td>{{ name.kcxzmc }}</td>
+
+                    <td>{{ name.bz }}</td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{%  extends 'base.html' %}
+
+{% block title %}考试安排{% endblock %}
+
+
+{% block content %}
+
+
+        <table class="table table-bordered table-hover ">
+            <tr>
+                <th>课程名称</th>
+                <th>考试时间</th>
+                <th>考场</th>
+                <th>班级</th>
+            </tr>
+            {% for name in info %}
+            <tr>
+
+                    <td>{{ name.kcmc }}</td>
+
+                    <td>{{ name.ksqssj }}</td>
+
+                    <td>{{ name.jsmc }}</td>
+
+                    <td>{{ name.bj }}</td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+
+{% endblock %}
+

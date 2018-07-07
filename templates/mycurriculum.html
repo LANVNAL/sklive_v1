@@ -1,0 +1,42 @@
+{%  extends 'base.html' %}
+
+{% block title %}我的课表{% endblock %}
+
+
+{% block content %}
+
+
+        <table class="table table-bordered table-hover ">
+            <tr>
+                <th>课程名称</th>
+                <th>授课老师</th>
+                <th>上课教室</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>课程时间</th>
+                <th>开课周</th>
+            </tr>
+            {% for name in info %}
+            <tr>
+
+                    <td>{{ name.kcmc }}</td>
+
+                    <td>{{ name.jsxm }}</td>
+
+                    <td>{{ name.jsmc }}</td>
+
+                    <td>{{ name.kssj }}</td>
+
+                    <td>{{ name.jssj }}</td>
+
+                    <td>{{ name.kcsj }}</td>
+
+                    <td>{{ name.kkzc }}</td>
+
+
+            </tr>
+            {% endfor %}
+        </table>
+
+
+{% endblock %}

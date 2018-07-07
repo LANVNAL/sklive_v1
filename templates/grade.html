@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}SKlive{% endblock %}
+{% block title %}考试成绩{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>Welcome To SKlive!</h1>
 </div>
-
+{{ wtf.quick_form(form) }}
 {% endblock %}

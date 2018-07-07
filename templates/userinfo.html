@@ -1,21 +1,17 @@
 {%  extends 'base.html' %}
 
-{% block title %}userinfo{% endblock %}
+{% block title %}个人信息{% endblock %}
+
+
 
 
 {% block content %}
-<div class="container">
+
     <div class="page-header">
-        <h1>{{ info }}</h1>
-    </div>
+    <h1>Hello {{ info.xm }},Welcome To SKlive!</h1>
 </div>
-{% endblock %}
 
-{% block body %}
-<div class="row marketing">
-
-    <div class="commodity-list">
-        <table class="table">
+        <table class="table table-bordered table-hover ">
             <tr>
                 <th>参数</th>
                 <th>值</th>
@@ -54,7 +50,5 @@
             {% endfor %}
         </table>
 
-    </div>
 
-</div>
 {% endblock %}

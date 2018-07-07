@@ -50,6 +50,18 @@ def exam_arrangement(username,password):
     #print exam_arrangement.text
     return json.loads(exam_arrangement.text)
 
+def express(company,number):
+    url = "https://www.kuaidi100.com/query?type={}&postid={}".format(company, number)
+    res = requests.get(url)
+    infojson = json.loads(res.text)
+    info = json.dumps(infojson, ensure_ascii=False)
+    return infojson
+
+
+
+
+
+
 if __name__ == '__main__':
     username = '201601060210'
     password = 'skctf2018'

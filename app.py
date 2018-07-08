@@ -8,7 +8,7 @@ from wtforms import StringField, SubmitField,SelectField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
-from createdb import User,init_db,adduser
+from createdb import User,Message,init_db,adduser
 import  json
 from __init__ import app
 
@@ -71,6 +71,11 @@ class RegisterForm(FlaskForm):
     username = StringField(u'设置用户名', validators=[DataRequired()])
     password = StringField(u'设置密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class Post_msg_Form(FlaskForm):
+    message = TextAreaField('say somethings')
+    submit = SubmitField('Submit')
+
 
 
 @app.errorhandler(404)

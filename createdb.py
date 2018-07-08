@@ -20,7 +20,11 @@ class User(db.Model):
         data = {'id': self.id, 'username': self.username}
         return data[item]
 
-
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.SmallInteger, primary_key=True)
+    sender = db.Column(db.String(64), unique=True)
+    message = db.Column(db.Text(999)), nullable=False)
 
 def adduser(username,password):
     new_user = User(username=username, password=password)

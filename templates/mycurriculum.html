@@ -5,13 +5,13 @@
 
 {% block content %}
 
-{% if msgerror == 1 %}
+{% if error == 1 %}
 
-    <h1 align="center">快递公司错误或单号不存在</h1>
+    <h1 align="center">用户名或密码错误</h1>
 
 {% endif %}
 
-{% if msgerror == 0 %}
+{% if error == 0 %}
 
         <table class="table table-bordered table-hover ">
             <tr>

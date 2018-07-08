@@ -1,0 +1,13 @@
+{%  extends 'base.html' %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+
+
+    <h1 align="center">用户名已存在</h1>
+
+    <div style="text-align:center;">
+    <a href="{{ url_for('register') }}" >返回注册</a>
+    </div>
+{% endblock %}

@@ -8,19 +8,24 @@ from wtforms import StringField, SubmitField,SelectField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
+from createdb import User,init_db,adduser
 import  json
+from __init__ import app
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['JSON_AS_ASCII'] = False
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/database'
+#app = Flask(__name__)
+#app.config['SECRET_KEY'] = 'hard to guess string'
+#app.config['JSON_AS_ASCII'] = False
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost:3306/sklive?charset=utf8mb4'
+#app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-#db = SQLAlchemy(app)
 
+
+#db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
+init_db()
 
 class NameForm(FlaskForm):
     func = SelectField('select function', choices=[('info', 'userinfo'), ('exam', 'exam'),('grade','grade'),('curriculum','curriculum')])
@@ -57,6 +62,17 @@ class ExpressForm(FlaskForm):
     number = StringField(u'请输入运单号', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class LoginForm(FlaskForm):
+    username = StringField(u'输入用户名', validators=[DataRequired()])
+    password = StringField(u'输入密码', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class RegisterForm(FlaskForm):
+    username = StringField(u'设置用户名', validators=[DataRequired()])
+    password = StringField(u'设置密码', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -70,6 +86,66 @@ def internal_server_error(e):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
+@app.route('/login',methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True:
+        return render_template('welcome.html',name = session['username'], error = 0)
+    else:
+        if form.validate_on_submit():
+            username = form.username.data
+            password = form.password.data
+            user = User.query.filter_by(username=username).first()
+            if not user or user.password != password:
+                login_error = 1
+                return render_template('welcome.html',error = login_error)
+            else:
+                session['login'] = True
+                session['username'] = username
+                if username == 'admin':
+                    session['admin'] = True
+                else:
+                    session['admin'] = False
+            return render_template('welcome.html',name = username, error = 0)
+        else:
+            return render_template('login.html',form=form)
+
+@app.route('/logout')
+def logout():
+    session['login'] = False
+    return redirect(url_for('login'))
+
+@app.route('/register',methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True:
+        return render_template('welcome.html', name=session['username'], error=0)
+    else:
+        if form.validate_on_submit():
+            username = form.username.data
+            password = form.password.data
+            user = User.query.filter_by(username=username).first()
+            if user:
+                user_exist = 1
+                return render_template('register_error.html',error = user_exist)
+            else:
+                adduser(username,password)
+                session['login'] = True
+                session['username'] = username
+                return redirect(url_for('login'))
+        else:
+            return render_template('register.html', form=form)
+
+
+
+
+
+
 
 @app.route('/user', methods=['GET', 'POST'])
 def user():
@@ -170,23 +246,35 @@ def api(name):
         data = json.loads(getjson)
         username = data['username']
         password = data['password']
-        info = userinfo(username,password)
-        return  str(info)
+        check = logincheck(username,password)
+        if check != 'ok':
+            return 'errror'
+        else:
+            info = userinfo(username,password)
+            return  str(info)
     if name == 'grade':
         getjson = request.get_data()
         data = json.loads(getjson)
         username = data['username']
         password = data['password']
         semester = data['semester']
-        info = grade(username,password,semester)
-        return str(info)
+        check = logincheck(username,password)
+        if check != 'ok':
+            return 'error'
+        else:
+            info = grade(username,password,semester)
+            return str(info)
     if name == 'exam':
         getjson = request.get_data()
         data = json.loads(getjson)
         username = data['username']
         password = data['password']
-        info = exam_arrangement(username, password)
-        return str(info)
+        check = logincheck(username,password)
+        if check != 'ok':
+            return 'error'
+        else:
+            info = exam_arrangement(username, password)
+            return str(info)
     if name == 'curriculum':
         getjson = request.get_data()
         data = json.loads(getjson)
@@ -194,15 +282,22 @@ def api(name):
         password = data['password']
         semester = data['semester']
         week = data['week']
-        info = curriculum(username, password, semester,week)
-        return str(info)
+        check = logincheck(username, password)
+        if check != 'ok':
+            return 'error'
+        else:
+            info = curriculum(username, password, semester,week)
+            return str(info)
     if name == 'express':
         getjson = request.get_data()
         data = json.loads(getjson)
         company = data['company']
         number = data['number']
         info = exam_arrangement(company, number)
-        return str(info)
+        if info['status'] == '200':
+            return str(info)
+        else:
+            return 'error'
 
 
 app.run(host='0.0.0.0')

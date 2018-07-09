@@ -4,11 +4,11 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField,SelectField
+from wtforms import StringField, SubmitField,SelectField,TextAreaField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
-from createdb import User,Message,init_db,adduser
+from createdb import User,Message,init_db,adduser,post_msg
 import  json
 from __init__ import app
 
@@ -25,7 +25,7 @@ from __init__ import app
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
-init_db()
+#init_db()
 
 class NameForm(FlaskForm):
     func = SelectField('select function', choices=[('info', 'userinfo'), ('exam', 'exam'),('grade','grade'),('curriculum','curriculum')])
@@ -73,7 +73,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class Post_msg_Form(FlaskForm):
-    message = TextAreaField('say somethings')
+    message = TextAreaField('say somethings',validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
@@ -90,7 +90,10 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    msg = Message.query.all()
+    return render_template('index.html',msg=msg)
+
+
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
@@ -147,7 +150,21 @@ def register():
             return render_template('register.html', form=form)
 
 
-
+@app.route('/post',methods=['GET', 'POST'])
+def postmsg():
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True:
+        form = Post_msg_Form()
+        if form.validate_on_submit():
+            sender = session['username']
+            msg = form.message.data
+            post_msg(sender,msg)
+            return redirect(url_for('index'))
+        else:
+            return render_template('postmsg.html',form=form)
+    else:
+        return redirect(url_for('login'))
 
 
 

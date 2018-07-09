@@ -7,4 +7,13 @@
     <h1>Welcome To SKlive!</h1>
 </div>
 
+    {% for data in msg %}
+        <p style="color:#eb9316;font-size:30px;">{{ data.sender }}:</p>
+        <p align="center" style="color:cadetblue;font-size:50px;">    {{ data.message }}</p>
+        <hr width ="80%">
+    {% endfor %}
+
+
+
+
 {% endblock %}

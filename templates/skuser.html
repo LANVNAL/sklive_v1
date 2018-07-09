@@ -1,0 +1,27 @@
+{%  extends 'base.html' %}
+
+{% block title %}个人信息{% endblock %}
+
+
+{% block page_content %}
+
+       <table class="table table-bordered table-hover " style="text-align:center">
+            <tr>
+                <th style="text-align:center">用户名</th>
+                <th style="text-align:center">联系方式</th>
+            </tr>
+            <tr>
+                    <td>{{ username }}</td>
+
+                    <td>{{ contact }}</td>
+            </tr>
+        </table>
+    <br/>
+    <h3 style="text-align:center">历史发帖</h3>
+    {% for data in msg %}
+        <p style="color:#eb9316;font-size:30px;">{{ data.sender }}:</p>
+        <p align="center" style="color:cadetblue;font-size:50px;">    {{ data.message }}</p>
+        <hr width ="80%">
+    {% endfor %}
+
+{% endblock %}

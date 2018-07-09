@@ -8,7 +8,7 @@
 </div>
 
     {% for data in msg %}
-        <p style="color:#eb9316;font-size:30px;">{{ data.sender }}:</p>
+        <p style="color:#eb9316;font-size:30px;">> <a href="{{ url_for('user_information',username=data.sender ) }}">{{ data.sender }}:</a></p>
         <p align="center" style="color:cadetblue;font-size:50px;">    {{ data.message }}</p>
         <hr width ="80%">
     {% endfor %}

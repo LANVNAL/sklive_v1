@@ -12,6 +12,7 @@ class User(db.Model):
     id = db.Column(db.SmallInteger, primary_key=True)
     username = db.Column(db.String(64), unique=True)
     password = db.Column(db.String(64), nullable=False)
+    contact = db.Column(db.String(64), unique=True)
 
     def __repr__(self):
         return str({'id': self.id, 'username': self.username})
@@ -26,8 +27,8 @@ class Message(db.Model):
     sender = db.Column(db.String(64), unique=False)
     message = db.Column(db.Text(999), nullable=False )
 
-def adduser(username,password):
-    new_user = User(username=username, password=password)
+def adduser(username,password,contact):
+    new_user = User(username=username, password=password,contact=contact)
     db.session.add(new_user)
     db.session.commit()
 
@@ -43,8 +44,8 @@ def init_db():
     db.create_all()
     print 'Create DB success'
     db.session.commit()
-    user_admin = User(username='admin', password='admin')
-    user_normal = User(username='test', password='test')
+    user_admin = User(username='admin', password='admin',contact='admin')
+    user_normal = User(username='test', password='test',contact='test@qq.com')
     db.session.add(user_admin)
     db.session.add(user_normal)
     db.session.commit()

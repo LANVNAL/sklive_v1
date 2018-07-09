@@ -9,7 +9,7 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
 from createdb import User,Message,init_db,adduser,post_msg
-import  json
+import  json,re
 from __init__ import app
 
 
@@ -70,6 +70,7 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     username = StringField(u'设置用户名', validators=[DataRequired()])
     password = StringField(u'设置密码', validators=[DataRequired()])
+    qq_or_tel = StringField(u'请输入联系方式QQ或电话', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class Post_msg_Form(FlaskForm):
@@ -95,7 +96,7 @@ def index():
 
 
 
-@app.route('/login',methods=['GET', 'POST'])
+@app.route('/login',methods=['GET', 'POST'])            #SKlive的登陆
 def login():
     form = LoginForm()
     if 'username' not in session:
@@ -126,7 +127,7 @@ def logout():
     session['login'] = False
     return redirect(url_for('login'))
 
-@app.route('/register',methods=['GET', 'POST'])
+@app.route('/register',methods=['GET', 'POST'])         #SKlive的注册
 def register():
     form = RegisterForm()
     if 'username' not in session:
@@ -137,20 +138,36 @@ def register():
         if form.validate_on_submit():
             username = form.username.data
             password = form.password.data
+            contact = form.qq_or_tel.data
             user = User.query.filter_by(username=username).first()
             if user:
                 user_exist = 1
                 return render_template('register_error.html',error = user_exist)
             else:
-                adduser(username,password)
+                adduser(username,password,contact)
                 session['login'] = True
                 session['username'] = username
                 return redirect(url_for('login'))
         else:
             return render_template('register.html', form=form)
 
+@app.route('/skuser/<username>',methods=['GET', 'POST'])
+def user_information(username):
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True:
+        user = User.query.filter_by(username=username).first()
+        contact = user.contact
+        msg = Message.query.filter_by(sender=username).all()
+        return render_template('skuser.html',username=username,contact=contact,msg=msg)
+    else:
+        return redirect(url_for('login'))
 
-@app.route('/post',methods=['GET', 'POST'])
+
+
+
+
+@app.route('/post',methods=['GET', 'POST'])         #发帖
 def postmsg():
     if 'username' not in session:
         session['login'] = False
@@ -169,7 +186,7 @@ def postmsg():
 
 
 
-@app.route('/user', methods=['GET', 'POST'])
+@app.route('/user', methods=['GET', 'POST'])        #强智的用户信息查询
 def user():
     form = UserinfoForm()
     if form.validate_on_submit():
@@ -263,6 +280,17 @@ def myexpress():
 
 @app.route('/app/<name>',methods=['GET','POST'])
 def api(name):
+    if name == 'logincheck':
+        getjson = request.get_data()
+        data = json.loads(getjson)
+        #userinfo = re.findall('username:(\w+),password:(\w+)',data)
+        username = data['username']
+        password = data['password']
+        check = logincheck(username, password)
+        if check == 'ok':
+            return 'ok'
+        else:
+            return  'error'
     if name == 'userinfo':
         getjson = request.get_data()
         data = json.loads(getjson)
@@ -270,7 +298,7 @@ def api(name):
         password = data['password']
         check = logincheck(username,password)
         if check != 'ok':
-            return 'errror'
+            return 'error'
         else:
             info = userinfo(username,password)
             return  str(info)

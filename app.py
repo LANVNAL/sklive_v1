@@ -9,7 +9,7 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
 from createdb import User,Message,init_db,adduser,post_msg
-import  json,re
+import  json,time
 from __init__ import app
 
 
@@ -176,7 +176,8 @@ def postmsg():
         if form.validate_on_submit():
             sender = session['username']
             msg = form.message.data
-            post_msg(sender,msg)
+            post_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+            post_msg(sender,msg,post_time)
             return redirect(url_for('index'))
         else:
             return render_template('postmsg.html',form=form)

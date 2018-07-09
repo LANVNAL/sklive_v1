@@ -19,8 +19,9 @@
     <br/>
     <h3 style="text-align:center">历史发帖</h3>
     {% for data in msg %}
-        <p style="color:#eb9316;font-size:30px;">{{ data.sender }}:</p>
+    <!--    <p style="color:#eb9316;font-size:30px;">{{ data.sender }}:</p> -->
         <p align="center" style="color:cadetblue;font-size:50px;">    {{ data.message }}</p>
+        <p align="right" style="color:lightsteelblue;font-size:20px;">{{ data.send_time }}</p>
         <hr width ="80%">
     {% endfor %}
 

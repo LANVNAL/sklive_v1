@@ -26,14 +26,15 @@ class Message(db.Model):
     id = db.Column(db.SmallInteger, primary_key=True)
     sender = db.Column(db.String(64), unique=False)
     message = db.Column(db.Text(999), nullable=False )
+    send_time = db.Column(db.String(64), unique=False)
 
 def adduser(username,password,contact):
     new_user = User(username=username, password=password,contact=contact)
     db.session.add(new_user)
     db.session.commit()
 
-def post_msg(sender,message):
-    new_msg = Message(sender=sender,message=message)
+def post_msg(sender,message,time):
+    new_msg = Message(sender=sender,message=message,send_time=time)
     db.session.add(new_msg)
     db.session.commit()
 

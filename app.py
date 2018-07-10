@@ -179,9 +179,12 @@ def msg_detail(msg_id):
             reply_msg = form.message.data
             responder = session['username']
             reply(responder,reply_msg,msg_id,now_time)
-            return render_template('message.html',form=form,msg=msg,replies=replies)
+            #return render_template('message.html',form=form,msg=msg,replies=replies)
+            return redirect(url_for('msg_detail',msg_id=msg_id))
         else:
             return render_template('message.html', form=form, msg=msg, replies=replies)
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/post',methods=['GET', 'POST'])         #发帖

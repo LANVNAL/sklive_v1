@@ -1,20 +1,20 @@
 {%  extends 'base.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}tiezixiangqing{% endblock %}
+{% block title %}帖子详情{% endblock %}
 
 
 {% block page_content %}
     {{ wtf.quick_form(form) }}
 
-    <h3 style="text-align:center">帖zixiangqing</h3>
+    <h3 style="text-align:center">帖子详情</h3>
 
     <p align="center" style="color:cadetblue;font-size:50px;">{{ msg.message }}</p>
 
     {% for data in replies %}
-        <p style="color:#eb9316;font-size:15px;">{{ data.responder }}:</p>
-        <p align="center" style="color:cadetblue;font-size:25px;">    {{ data.message }}</p>
-        <p align="right" style="color:lightsteelblue;font-size:10px;">{{ data.reply_time }}</p>
+        <p style="color:#eb9316;font-size:15px;padding-left: 70px;">{{ data.responder }}:</p>
+        <p align="center" style="color:cadetblue;font-size:25px;padding-left: 80px;padding-right: 80px;">    {{ data.message }}</p>
+        <p align="right" style="color:lightsteelblue;font-size:10px;padding-right: 70px;">{{ data.reply_time }}</p>
         <hr width ="80%">
     {% endfor %}
 

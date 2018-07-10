@@ -8,7 +8,7 @@ from wtforms import StringField, SubmitField,SelectField,TextAreaField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
-from createdb import User,Message,init_db,adduser,post_msg
+from createdb import User,Message,init_db,adduser,post_msg,reply
 import  json,time
 from __init__ import app
 
@@ -77,7 +77,9 @@ class Post_msg_Form(FlaskForm):
     message = TextAreaField('say somethings',validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-
+class ReplyForm(FlaskForm):
+    message = TextAreaField('Reply', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -164,7 +166,22 @@ def user_information(username):
         return redirect(url_for('login'))
 
 
-
+@qpp.route('/message/<msg_id>',methods=['GET', 'POST'])
+def msg_detail(msg_id):
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True:
+        form = ReplyForm()
+        msg = Message.query.filter_by(id=msg_id).first()
+        replies = Reply.query.filter_by(msg_id=msg_id).all()
+        now_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+        if form.validate_on_submit():
+            reply_msg = form.message.data
+            responder = session['username']
+            reply(responder,reply_msg,msg_id,now_time)
+            return render_template('message.html',form=form,msg=msg,replies=replies)
+        else:
+            return render_template('message.html', form=form, msg=msg, replies=replies)
 
 
 @app.route('/post',methods=['GET', 'POST'])         #发帖

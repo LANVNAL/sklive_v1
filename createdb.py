@@ -36,7 +36,7 @@ class Message(db.Model):
         return data[item]
 
 
-class Reply(db.model):
+class Reply(db.Model):
     __yablename__ = 'reply'
     id = db.Column(db.SmallInteger,primary_key=True)
     responder = db.Column(db.String(64), unique=False)

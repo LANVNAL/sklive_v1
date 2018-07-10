@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{%  extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-</body>
-</html>
+{% block title %}tiezixiangqing{% endblock %}
+
+
+{% block page_content %}
+    {{ wtf.quick_form(form) }}
+
+    <h3 style="text-align:center">帖zixiangqing</h3>
+
+    <p align="center" style="color:cadetblue;font-size:50px;">{{ msg.message }}</p>
+
+    {% for data in replies %}
+        <p style="color:#eb9316;font-size:15px;">{{ data.responder }}:</p>
+        <p align="center" style="color:cadetblue;font-size:25px;">    {{ data.message }}</p>
+        <p align="right" style="color:lightsteelblue;font-size:10px;">{{ data.reply_time }}</p>
+        <hr width ="80%">
+    {% endfor %}
+
+{% endblock %}

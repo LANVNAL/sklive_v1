@@ -8,7 +8,7 @@ from wtforms import StringField, SubmitField,SelectField,TextAreaField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
-from createdb import User,Message,init_db,adduser,post_msg,reply
+from createdb import User,Message,Reply,init_db,adduser,post_msg,reply
 import  json,time
 from __init__ import app
 
@@ -166,7 +166,7 @@ def user_information(username):
         return redirect(url_for('login'))
 
 
-@qpp.route('/message/<msg_id>',methods=['GET', 'POST'])
+@app.route('/message/<msg_id>',methods=['GET', 'POST'])
 def msg_detail(msg_id):
     if 'username' not in session:
         session['login'] = False

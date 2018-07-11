@@ -31,6 +31,7 @@ def userinfo(username,password):
     userinfo = S.post(info_url, headers=headers, data=data)
     return json.loads(userinfo.text)
 
+
 def curriculum(username,password,semester,week):
     global S
     token = login(username, password)

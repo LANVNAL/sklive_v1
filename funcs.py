@@ -74,8 +74,8 @@ def express(company,number):
 
 
 if __name__ == '__main__':
-    username = '201601060210'
-    password = 'skctf2018'
+    username = 'xxxxxx'
+    password = 'xxxxxx'
     semester = '2017-2018-2'
     week = '12'
     token = login(username,password)

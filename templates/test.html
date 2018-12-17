@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script type="text/javascript">
+    var CryptoJS = require("crypto-js");
+
+var plaintText = "test123";
+var key = CryptoJS.enc.Utf8.parse("123456789easemob");
+    var options = {
+    iv: CryptoJS.enc.Utf8.parse("0000000000000000"),
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+    };
+    var encryptedData = CryptoJS.AES.encrypt(plaintText, key, options);
+
+var encryptedBase64Str = encryptedData.toString();
+print(encryptedBase64Str);
+alert(plaintText);
+
+</script>
+
+</body>
+</html>

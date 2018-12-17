@@ -5,15 +5,16 @@
 
 
 {% block page_content %}
+
     {{ wtf.quick_form(form) }}
 
     <h3 style="text-align:center">帖子详情</h3>
-
-    <p align="center" style="color:cadetblue;font-size:50px;">{{ msg.message }}</p>
+    <p align="center" style="color:cadetblue;font-size:50px;padding-left: 80px;padding-right: 80px;">    {{ msg.title }}</p>
+    <p align="center" style="color:cadetblue;font-size:20px;padding-left: 80px;padding-right: 80px;">{{ msg.message }}</p>
 
     {% for data in replies %}
-        <p style="color:#eb9316;font-size:15px;padding-left: 70px;">{{ data.responder }}:</p>
-        <p align="center" style="color:cadetblue;font-size:25px;padding-left: 80px;padding-right: 80px;">    {{ data.message }}</p>
+        <p style="color:#eb9316;font-size:15px;padding-left: 70px;">#>{{ data.responder }}:</p>
+        <p align="center" style="color:royalblue;font-size:18px;padding-left: 80px;padding-right: 80px;">    {{ data.message }}</p>
         <p align="right" style="color:lightsteelblue;font-size:10px;padding-right: 70px;">{{ data.reply_time }}</p>
         <hr width ="80%">
     {% endfor %}

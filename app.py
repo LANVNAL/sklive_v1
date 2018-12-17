@@ -1,27 +1,25 @@
 # -*- coding:utf-8 -*-
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, session, redirect, url_for, flash,Response
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField,SelectField,TextAreaField
+from wtforms import StringField, SubmitField,SelectField,TextAreaField,PasswordField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from funcs import login,userinfo,curriculum,grade,exam_arrangement,express,logincheck
-from createdb import User,Message,Reply,init_db,adduser,post_msg,reply
+from createdb import *
+from flask import make_response
 import  json,time
 from __init__ import app
+from captcha import get_answer,get_captcha,get_file,check_captcha
+import hashlib
+import os
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
-#app = Flask(__name__)
-#app.config['SECRET_KEY'] = 'hard to guess string'
-#app.config['JSON_AS_ASCII'] = False
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost:3306/sklive?charset=utf8mb4'
-#app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-
-
-#db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
@@ -31,30 +29,30 @@ class NameForm(FlaskForm):
     func = SelectField('select function', choices=[('info', 'userinfo'), ('exam', 'exam'),('grade','grade'),('curriculum','curriculum')])
     semester = SelectField('select semester',choices=[('2017-2018-1','2017-2018-1'),('2017-2018-2','2017-2018-2'),('2018-2019-1','2018-2019-1'),('2018-2019-2','2018-2019-2')])
     username = StringField(u'输入学号', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class UserinfoForm(FlaskForm):
     username = StringField(u'输入学号', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class GradeForm(FlaskForm):
     semester = SelectField(u'选择学期',choices=[('2017-2018-1','2017-2018-1'),('2017-2018-2','2017-2018-2'),('2018-2019-1','2018-2019-1'),('2018-2019-2','2018-2019-2'),('2019-2020-1','2019-2020-1'),('2019-2020-2','2019-2020-2')])
     username = StringField(u'输入学号', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class Exam_arrangementForm(FlaskForm):
     username = StringField(u'输入学号', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class CurriculumForm(FlaskForm):
     semester = SelectField(u'选择学期', choices=[('2017-2018-1', '2017-2018-1'), ('2017-2018-2', '2017-2018-2'),('2018-2019-1', '2018-2019-1'), ('2018-2019-2', '2018-2019-2'),('2019-2020-1', '2019-2020-1'), ('2019-2020-2', '2019-2020-2')])
     week = SelectField(u'选择周数', choices=[('1','1'),('2','2'),('3','3'),('4','4'),('5','5'),('6','6'),('7','7'),('8','8'),('9','9'),('10','10'),('11','11'),('12','12'),('13','13'),('14','14'),('15','15'),('16','16')])
     username = StringField(u'输入学号', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class ExpressForm(FlaskForm):
@@ -62,24 +60,39 @@ class ExpressForm(FlaskForm):
     number = StringField(u'请输入运单号', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-class LoginForm(FlaskForm):
+
+class CheckloginForm(FlaskForm):
     username = StringField(u'输入用户名', validators=[DataRequired()])
-    password = StringField(u'输入密码', validators=[DataRequired()])
+    password = PasswordField(u'输入密码', validators=[DataRequired()])
+    capcode = StringField(u'输入验证码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class RegisterForm(FlaskForm):
     username = StringField(u'设置用户名', validators=[DataRequired()])
-    password = StringField(u'设置密码', validators=[DataRequired()])
+    password = PasswordField(u'设置密码', validators=[DataRequired()])
     qq_or_tel = StringField(u'请输入联系方式QQ或电话', validators=[DataRequired()])
+    safe_ques1 = StringField(u'输入你最喜欢的电影（用于密码找回）', validators=[DataRequired()])
+    safe_ques2 = StringField(u'输入你最喜欢的歌曲（用于密码找回）', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class PassResetForm(FlaskForm):
+    username = StringField(u'输入用户名', validators=[DataRequired()])
+    safe_ques_num = SelectField(u'选择你的安全问题', choices=[('1','你最喜欢的电影是'),('2','你最喜欢的歌曲是')])
+    safe_ques = StringField(u'输入你的答案(安全问题)', validators=[DataRequired()])
+    newpassword = PasswordField(u'设置你的新密码', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class Post_msg_Form(FlaskForm):
+    title = StringField('Your Title',validators=[DataRequired()])
     message = TextAreaField('say somethings',validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class ReplyForm(FlaskForm):
     message = TextAreaField('Reply', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -93,40 +106,68 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    msg = Message.query.all()
+    #print session   #测试
+    msg = Message.query.filter_by(delect='no').all()
     return render_template('index.html',msg=msg)
 
 
+@app.route('/captcha', methods=['POST', 'GET'])
+def captcha():
+    image = file(os.path.join(os.path.dirname(__file__), 'captcha', 'jpgs','ques{}.jpg').format(session['uuid']))
+    return Response(image, mimetype='image/jpeg')
 
 @app.route('/login',methods=['GET', 'POST'])            #SKlive的登陆
 def login():
-    form = LoginForm()
-    if 'username' not in session:
-        session['login'] = False
-    if session['login'] == True:
-        return render_template('welcome.html',name = session['username'], error = 0)
-    else:
-        if form.validate_on_submit():
-            username = form.username.data
-            password = form.password.data
+    #checkform = CheckloginForm()
+    #print session
+    if 'login' in session and session['login'] == True:
+        flash("你已经登陆")
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        try:
+            captcha_judge = check_captcha(request.form.get('captcha_x'), request.form.get('captcha_y'), session['uuid'])
+        except:
+            captcha_judge = False
+        if 'username' not in session:
+            session['login'] = False
+            session['login_error'] = 0
+            session['username'] = ''
+        if session['login'] == True:
+            return render_template('welcome.html',name = session['username'], error = 0)
+        else:
+            username = request.form.get('username')
+            password = request.form.get('password')
             user = User.query.filter_by(username=username).first()
             if not user or user.password != password:
-                login_error = 1
-                return render_template('welcome.html',error = login_error)
+                session['login_error'] += 1
+                flash("用户名或密码错误")
+                captcha_list = get_captcha()
+                session['uuid'] = captcha_list[0]
+                return render_template('login.html',uuid=captcha_list[0],ques=captcha_list[1].decode('utf-8'),login_error=session['login_error'])
+            if not captcha_judge and session['login_error'] >= 3:
+                flash("验证码错误!")
+                captcha_list = get_captcha()
+                session['uuid'] = captcha_list[0]
+                return render_template('login.html',uuid=captcha_list[0],ques=captcha_list[1].decode('utf-8'),login_error=session['login_error'])
             else:
                 session['login'] = True
                 session['username'] = username
+                session['login_error'] = 0
                 if username == 'admin':
                     session['admin'] = True
                 else:
                     session['admin'] = False
-            return render_template('welcome.html',name = username, error = 0)
-        else:
-            return render_template('login.html',form=form)
+                return render_template('welcome.html',name = username, error = 0)
+    else:
+        captcha_list = get_captcha()
+        session['uuid'] = captcha_list[0]
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session['login'] = False
+    flash(u"已成功登出")
+    #session['login'] = False
+    session.clear()
     return redirect(url_for('login'))
 
 @app.route('/register',methods=['GET', 'POST'])         #SKlive的注册
@@ -135,23 +176,56 @@ def register():
     if 'username' not in session:
         session['login'] = False
     if session['login'] == True:
-        return render_template('welcome.html', name=session['username'], error=0)
+        flash("你已经登陆，如需注册请先登出！")
+        return redirect(url_for('index'))
+        #return render_template('welcome.html', name=session['username'], error=0)
     else:
         if form.validate_on_submit():
             username = form.username.data
-            password = form.password.data
+            password = hashlib.md5(form.password.data).hexdigest()
             contact = form.qq_or_tel.data
+            safe_ques1 = form.safe_ques1.data
+            safe_ques2 = form.safe_ques2.data
             user = User.query.filter_by(username=username).first()
             if user:
-                user_exist = 1
-                return render_template('register_error.html',error = user_exist)
+                flash("用户已存在")
+                return render_template('register.html', form=form)
             else:
-                adduser(username,password,contact)
+                adduser(username,password,contact,safe_ques1,safe_ques2)
                 session['login'] = True
                 session['username'] = username
                 return redirect(url_for('login'))
         else:
             return render_template('register.html', form=form)
+
+
+@app.route("/pass/reset",methods=['GET', 'POST'])   #密码重置
+def reset():
+    form = PassResetForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        newpassword = form.newpassword.data
+        safe_ques_num = form.safe_ques_num.data
+        safe_ques = form.safe_ques.data
+        user = User.query.filter_by(username=username).first()
+        if safe_ques_num == 1:              #选择安全问题
+            answer = user.safe_ques1
+        else:
+            answer = user.safe_ques2
+        if 'rst_error_time' in session and time.time()-session['rst_error_time']<30:    #限制30秒提交一次
+            flash("请{}秒后重试".format(int(30-(time.time()-session['rst_error_time']))))
+        else:
+            if safe_ques == answer:
+                reset_password(username,newpassword)
+                session['login'] = False
+                return redirect(url_for('login'))
+            else:
+                flash(u"安全问题答案错误")
+                session['rst_error_time'] = time.time()
+                return render_template('reset.html',form=form)
+    return render_template('reset.html', form=form)
+
+
 
 @app.route('/skuser/<username>',methods=['GET', 'POST'])
 def user_information(username):
@@ -163,6 +237,7 @@ def user_information(username):
         msg = Message.query.filter_by(sender=username).all()
         return render_template('skuser.html',username=username,contact=contact,msg=msg)
     else:
+        flash(u"请登录")
         return redirect(url_for('login'))
 
 
@@ -187,6 +262,19 @@ def msg_detail(msg_id):
         return redirect(url_for('login'))
 
 
+@app.route('/delect/<msg_id>',methods=['GET','POST'])
+def msg_delect(msg_id):
+    if 'username' not in session:
+        session['login'] = False
+    if session['login'] == True and session['username'] == 'admin':
+        #msg = Message.query.filter_by(id=msg_id).first()
+        delect_msg(msg_id)
+    else:
+        flash(u"无权访问！！")
+    return redirect(url_for('index'))
+
+
+
 @app.route('/post',methods=['GET', 'POST'])         #发帖
 def postmsg():
     if 'username' not in session:
@@ -195,13 +283,15 @@ def postmsg():
         form = Post_msg_Form()
         if form.validate_on_submit():
             sender = session['username']
+            title = form.title.data
             msg = form.message.data
             post_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
-            post_msg(sender,msg,post_time)
+            post_msg(sender,title,msg,post_time)
             return redirect(url_for('index'))
         else:
             return render_template('postmsg.html',form=form)
     else:
+        flash(u"请登录")
         return redirect(url_for('login'))
 
 
@@ -299,7 +389,7 @@ def myexpress():
 
 
 
-@app.route('/app/<name>',methods=['GET','POST'])
+@app.route('/app/<name>',methods=['GET','POST'])    #给安卓应用的接口
 def api(name):
     if name == 'logincheck':
         getjson = request.get_data()

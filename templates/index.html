@@ -5,12 +5,63 @@
 {% block page_content %}
 <div class="page-header">
     <h1>Welcome To SKlive!</h1>
+    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ----------Chat & Share</h5>
 </div>
 
+
+    <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<div id="myCarousel" class="carousel slide" style="margin:0 auto;width: 90%">
+	<!-- 轮播（Carousel）指标 -->
+	<ol class="carousel-indicators">
+		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		<li data-target="#myCarousel" data-slide-to="1"></li>
+		<li data-target="#myCarousel" data-slide-to="2"></li>
+	</ol>
+	<!-- 轮播（Carousel）项目 -->
+	<div class="carousel-inner">
+		<div class="item active" align="center">
+			<img  src="/static/images/security.jpg" alt="First slide">
+            <div class="carousel-caption">标题 1</div>
+		</div>
+		<div class="item" align="center">
+			<img  src="/static/images/security.jpg" alt="Second slide">
+            <div class="carousel-caption">标题 2</div>
+		</div>
+		<div class="item" align="center">
+			<img  src="/static/images/security.jpg" alt="Third slide">
+            <div class="carousel-caption">标题 3</div>
+		</div>
+	</div>
+	<!-- 轮播（Carousel）导航 -->
+	<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		<span class="sr-only">Previous</span>
+	</a>
+	<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+		<span class="sr-only">Next</span>
+	</a>
+</div>
+
+<br><br>
+
     {% for data in msg %}
-        <p style="color:#eb9316;font-size:30px;">> <a href="{{ url_for('user_information',username=data.sender ) }}">{{ data.sender }}:</a></p>
-        <p align="center" style="color:cadetblue;font-size:50px;"> <a href="{{ url_for('msg_detail',msg_id=data.id )}}" style="color:cadetblue;font-size:50px;">   {{ data.message }}</p></a>
-        <p align="right" style="color:lightsteelblue;font-size:20px;">{{ data.send_time }}</p>
+        <p style="color:#eb9316;font-size:20px;">> <a href="{{ url_for('user_information',username=data.sender ) }}">{{ data.sender }}:</a>
+            {% if session['username'] == 'admin' %}
+            <a style="float: right;font-size: 10px"  href="{{ url_for('msg_delect',msg_id=data.id) }}">删除</a>
+            {% endif %}
+        </p>
+
+        <p align="center" style="color:cadetblue;font-size:25px;"> <a href="{{ url_for('msg_detail',msg_id=data.id )}}" style="color:cadetblue;font-size:25px;">   {{ data.title }}</p></a>
+
+        <p align="right" style="color:lightsteelblue;font-size:8px;">{{ data.send_time }}</p>
         <hr width ="80%">
     {% endfor %}
 

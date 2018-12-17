@@ -4,9 +4,66 @@
 {% block title %}登陆{% endblock %}
 
 {% block page_content %}
+
+
 <div class="page-header">
     <h1>Welcome To SKlive!</h1>
     <h3>登陆</h3>
 </div>
-{{ wtf.quick_form(form) }}
+
+
+    {% for msg in get_flashed_messages(category_filter='error') %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Warning!</strong> {{ msg }}.
+            </div>
+        {% endfor %}
+
+
+
+
+<div class="row">
+            <form action="/login" method="post" id="loginform">
+
+
+                <div class="form-group">
+                    <label>用户名：</label>
+                    <input type="text" class="form-control" name="username" placeholder="" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>密码：</label>
+                    <input type="password" class="form-control" name="password" placeholder="" id="password" required>
+                </div>
+
+                <p></p>
+                {% if session['login_error'] and session['login_error'] >= 3 %}
+                <div>
+                    <label>验证码 ( {{ ques }} )：</label><br/>
+                    <canvas id="vtt_captcha" width="680" height="460" rel="{{ uuid }}"></canvas>
+                    <input class="form-control" type="hidden" id="captcha_x" name="captcha_x" value="">
+                    <input class="form-control" type="hidden" id="captcha_y" name="captcha_y" value="">
+                </div>
+                {% include "captcha.html" %}
+                {% endif %}
+                <a class="btn btn-warning" href="/pass/reset">找回密码</a>
+                <!--<button class="btn btn-primary pull-left" type="submit" onclick="dologin()">登录</button>-->
+                <input class="btn btn-primary pull-left" type="submit" value="login" onclick="dologin()"/>
+            </form>
+            <script type="text/javascript" src="/static/js/md5.js"></script>
+            <script type="text/javascript">
+                function dologin() {
+                    var password = document.getElementById("password").value;
+                    var loginform = document.getElementById("loginform");
+                    password = hex_md5(password);
+                    document.getElementById("password").value = password;
+                    loginform.submit();
+                }
+            </script>
+
+
+</div>
+
+
+
 {% endblock %}
